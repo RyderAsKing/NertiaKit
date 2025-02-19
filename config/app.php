@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Tagline
+    |--------------------------------------------------------------------------
+    |
+    | This value is the tagline of your application, which will be used in the
+    | UI where a brief description of your application needs to be displayed.
+    |
+    */
+
+    'tagline' => env('APP_TAGLINE', 'Your application tagline here'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
@@ -122,5 +134,18 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Logo
+    |--------------------------------------------------------------------------
+    |
+    | This value is the path to your application's logo icon, relative to the
+    | resources/assets directory. This icon will be used in the UI where
+    | an application logo needs to be displayed.
+    |
+    */
+
+    'logo' => env('APP_LOGO', 'logo.svg'),
 
 ];

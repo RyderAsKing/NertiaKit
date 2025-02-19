@@ -34,6 +34,11 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'app' => [
+                'name' => config('app.name'),
+                'tagline' => config('app.tagline'),
+                'logo' => config('app.logo'),
+            ],
         ];
     }
 }
