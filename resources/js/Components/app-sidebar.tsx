@@ -7,6 +7,7 @@ import {
     FileText,
     BarChart3,
     Mail,
+    Shield,
 } from "lucide-react";
 import { Link } from "@inertiajs/react";
 
@@ -32,6 +33,7 @@ interface PageProps {
             name: string;
             email: string;
             avatar?: string;
+            roles: { name: string }[];
         };
     };
     app: {
@@ -48,63 +50,6 @@ const navigation = [
         url: route("dashboard"),
         icon: LayoutDashboard,
         isActive: route().current("dashboard"),
-        items: undefined,
-    },
-    {
-        title: "Documents",
-        url: "#",
-        icon: FileText,
-        isActive: false,
-        items: undefined,
-    },
-    {
-        title: "Messages",
-        url: "#",
-        icon: Mail,
-        isActive: false,
-        items: undefined,
-    },
-    {
-        title: "Analytics",
-        url: "#",
-        icon: BarChart3,
-        isActive: false,
-        items: [
-            {
-                title: "Overview",
-                url: "#",
-            },
-            {
-                title: "Reports",
-                url: "#",
-            },
-            {
-                title: "Statistics",
-                url: "#",
-            },
-        ],
-    },
-    {
-        title: "Team",
-        url: "#",
-        icon: Users,
-        isActive: false,
-        items: [
-            {
-                title: "Members",
-                url: "#",
-            },
-            {
-                title: "Permissions",
-                url: "#",
-            },
-        ],
-    },
-    {
-        title: "Documentation",
-        url: "#",
-        icon: BookOpen,
-        isActive: false,
     },
     {
         title: "Settings",
@@ -112,11 +57,39 @@ const navigation = [
         icon: Settings2,
         isActive: route().current("profile.edit"),
     },
+    {
+        title: "Users",
+        url: route("admin.users.index"),
+        icon: Users,
+        isActive: route().current("admin.users.*"),
+        viewBy: "admin",
+    },
+    // {
+    //     title: "Admin",
+    //     url: "#",
+    //     icon: Shield,
+    //     isActive: route().current("admin.*"),
+    //     viewBy: "admin",
+    //     items: [
+    //         {
+    //             title: "Users",
+    //             url: route("admin.users.index"),
+    //             isActive: route().current("admin.users.*"),
+    //         },
+    //         // Can add more admin items here later
+    //     ],
+    // },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { auth, app } = usePage<PageProps>().props;
     const { isMobile } = useSidebar();
+
+    const filteredNavigation = navigation.filter(
+        (item) =>
+            !item.viewBy ||
+            auth.user.roles.some((role) => role.name === item.viewBy)
+    );
 
     return (
         <Sidebar collapsible="icon" {...props}>
@@ -139,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navigation} />
+                <NavMain items={filteredNavigation} />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={auth.user} />
