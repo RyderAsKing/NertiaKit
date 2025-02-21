@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -101,8 +102,24 @@ class UserController extends Controller
         $user->update($validated);
         $user->syncRoles([$validated['role']]);
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('admin.users.edit', $user->id)
             ->with('success', 'User updated successfully.');
+    }
+
+    /**
+     * Update the specified resource password.
+     */
+    public function updatePassword(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return back()->with('success', 'Password updated successfully.');
     }
 
     /**

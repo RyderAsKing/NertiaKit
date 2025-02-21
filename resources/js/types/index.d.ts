@@ -7,6 +7,8 @@ export interface User {
     roles: {
         name: string;
     }[];
+    created_at: string;
+    updated_at: string;
 }
 
 export type PageProps<
