@@ -18,28 +18,7 @@ import React, { PropsWithChildren, ReactNode, useEffect, useRef } from "react";
 import { toast, Toaster } from "sonner";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { ThemeSwitcher } from "@/Components/theme-switcher";
-
-interface PageProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-            avatar?: string;
-        };
-    };
-    app: {
-        name: string;
-        tagline: string;
-        logo: string;
-    };
-    flash: {
-        success?: string;
-        error?: string;
-        warning?: string;
-    };
-    [key: string]: any;
-}
+import { PageProps as InertiaPageProps } from "@inertiajs/core";
 
 interface BreadcrumbItem {
     name: string;
@@ -50,7 +29,7 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: BreadcrumbItem[] }>) {
-    const { auth, app, flash } = usePage<PageProps>().props;
+    const { auth, app, flash } = usePage<InertiaPageProps>().props;
     const scrollViewportRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

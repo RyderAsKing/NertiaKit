@@ -25,24 +25,7 @@ import {
     useSidebar,
 } from "@/Components/ui/sidebar";
 import { usePage } from "@inertiajs/react";
-
-interface PageProps {
-    auth: {
-        user: {
-            id: number;
-            name: string;
-            email: string;
-            avatar?: string;
-            roles: { name: string }[];
-        };
-    };
-    app: {
-        name: string;
-        tagline: string;
-        logo: string;
-    };
-    [key: string]: any;
-}
+import { PageProps as InertiaPageProps } from "@inertiajs/core";
 
 const navigation = [
     {
@@ -64,25 +47,10 @@ const navigation = [
         isActive: route().current("admin.users.*"),
         viewBy: "admin",
     },
-    // {
-    //     title: "Admin",
-    //     url: "#",
-    //     icon: Shield,
-    //     isActive: route().current("admin.*"),
-    //     viewBy: "admin",
-    //     items: [
-    //         {
-    //             title: "Users",
-    //             url: route("admin.users.index"),
-    //             isActive: route().current("admin.users.*"),
-    //         },
-    //         // Can add more admin items here later
-    //     ],
-    // },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { auth, app } = usePage<PageProps>().props;
+    const { auth, app } = usePage<InertiaPageProps>().props;
     const { isMobile } = useSidebar();
 
     const filteredNavigation = navigation.filter(
@@ -92,12 +60,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     );
 
     return (
-        <Sidebar collapsible="icon" {...props}>
+        <Sidebar collapsible="icon" {...props} variant="sidebar">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild size="lg">
                             <Link href="/">
+                                <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground bg-black p-1.5">
+                                    <img
+                                        src={`/assets/${app.logo}`}
+                                        alt={app.name}
+                                        className="size-8 rounded-md "
+                                    />
+                                </div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">
                                         {app.name}

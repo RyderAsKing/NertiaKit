@@ -4,6 +4,9 @@ export interface User {
     email: string;
     email_verified_at?: string;
     theme?: "light" | "dark";
+    roles: {
+        name: string;
+    }[];
 }
 
 export type PageProps<
@@ -12,4 +15,19 @@ export type PageProps<
     auth: {
         user: User;
     };
+    app: {
+        name: string;
+        tagline: string;
+        logo: string;
+    };
+    flash: {
+        success?: string;
+        error?: string;
+        warning?: string;
+    };
 };
+
+export interface Role {
+    id: number;
+    name: string;
+}
