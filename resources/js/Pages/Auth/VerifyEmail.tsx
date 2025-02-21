@@ -1,19 +1,26 @@
-import PrimaryButton from '@/Components/PrimaryButton';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { Button } from "@/Components/ui/button";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { FormEventHandler } from "react";
+import { toast } from "sonner";
 
 export default function VerifyEmail({ status }: { status?: string }) {
     const { post, processing } = useForm({});
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-
-        post(route('verification.send'));
+        post(route("verification.send"), {
+            onSuccess: () => {
+                toast.success("Verification link sent!");
+            },
+        });
     };
 
     return (
-        <GuestLayout>
+        <GuestLayout
+            title="Verify Email"
+            description="Please verify your email address to continue"
+        >
             <Head title="Email Verification" />
 
             <div className="mb-4 text-sm text-gray-600">
@@ -23,27 +30,28 @@ export default function VerifyEmail({ status }: { status?: string }) {
                 another.
             </div>
 
-            {status === 'verification-link-sent' && (
+            {status === "verification-link-sent" && (
                 <div className="mb-4 text-sm font-medium text-green-600">
                     A new verification link has been sent to the email address
                     you provided during registration.
                 </div>
             )}
 
-            <form onSubmit={submit}>
-                <div className="mt-4 flex items-center justify-between">
-                    <PrimaryButton disabled={processing}>
-                        Resend Verification Email
-                    </PrimaryButton>
-
-                    <Link
-                        href={route('logout')}
-                        method="post"
-                        as="button"
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            <form onSubmit={submit} className="space-y-6">
+                <div className="flex items-center justify-between gap-4">
+                    <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={processing}
                     >
-                        Log Out
-                    </Link>
+                        Resend Verification Email
+                    </Button>
+
+                    <Button variant="outline" className="w-full" asChild>
+                        <Link href={route("logout")} method="post">
+                            Log Out
+                        </Link>
+                    </Button>
                 </div>
             </form>
         </GuestLayout>

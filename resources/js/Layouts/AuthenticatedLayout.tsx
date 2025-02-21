@@ -1,10 +1,11 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
 import { AppSidebar } from "@/Components/app-sidebar";
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbList,
     BreadcrumbPage,
+    BreadcrumbLink,
+    BreadcrumbSeparator,
 } from "@/Components/ui/breadcrumb";
 import { Separator } from "@/Components/ui/separator";
 import {
@@ -13,47 +14,103 @@ import {
     SidebarTrigger,
 } from "@/Components/ui/sidebar";
 import { Link, usePage } from "@inertiajs/react";
-import { PropsWithChildren, ReactNode } from "react";
+import React, { PropsWithChildren, ReactNode, useEffect, useRef } from "react";
+import { toast, Toaster } from "sonner";
+import { ScrollArea } from "@/Components/ui/scroll-area";
+
+interface PageProps {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+            avatar?: string;
+        };
+    };
+    app: {
+        name: string;
+        tagline: string;
+        logo: string;
+    };
+    flash: {
+        success?: string;
+        error?: string;
+        warning?: string;
+    };
+    [key: string]: any;
+}
+
+interface BreadcrumbItem {
+    name: string;
+    link?: string;
+}
 
 export default function Authenticated({
     header,
     children,
-}: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+}: PropsWithChildren<{ header?: BreadcrumbItem[] }>) {
+    const { auth, app, flash } = usePage<PageProps>().props;
+    const scrollViewportRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (flash.success) toast.success(flash.success);
+        if (flash.error) toast.error(flash.error);
+        if (flash.warning) toast.warning(flash.warning);
+    }, [flash]);
+
+    useEffect(() => {
+        const viewport = scrollViewportRef.current?.querySelector(
+            "[data-radix-scroll-area-viewport]"
+        );
+        if (viewport) {
+            viewport.scrollTop = 0;
+        }
+    }, [children]);
 
     return (
         <SidebarProvider>
-            <div className="min-h-screen bg-gray-100">
-                <AppSidebar />
-                <SidebarInset>
-                    <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-100 bg-white transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-                        <div className="flex items-center gap-2 px-4">
-                            <SidebarTrigger className="-ml-1" />
-                            <Link
-                                href="/"
-                                className="flex shrink-0 items-center"
-                            >
-                                <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                            </Link>
-                            <Separator
-                                orientation="vertical"
-                                className="mr-2 h-4"
-                            />
-                            <Breadcrumb>
-                                <BreadcrumbList>
-                                    <BreadcrumbItem>
-                                        <BreadcrumbPage>
-                                            {header}
-                                        </BreadcrumbPage>
-                                    </BreadcrumbItem>
-                                </BreadcrumbList>
-                            </Breadcrumb>
-                        </div>
-                    </header>
-
-                    <main className="flex-1 p-4">{children}</main>
-                </SidebarInset>
-            </div>
+            <AppSidebar />
+            <SidebarInset className="flex h-screen flex-col">
+                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-100 bg-white p-4">
+                    <div className="flex items-center gap-2 px-4">
+                        <SidebarTrigger className="-ml-4" />
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                <BreadcrumbItem>
+                                    <BreadcrumbLink asChild>
+                                        <Link href={route("dashboard")}>
+                                            {app.name}
+                                        </Link>
+                                    </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                {header &&
+                                    header.map((item, index) => (
+                                        <React.Fragment key={index}>
+                                            <BreadcrumbSeparator />
+                                            <BreadcrumbItem>
+                                                {item.link ? (
+                                                    <BreadcrumbLink asChild>
+                                                        <Link href={item.link}>
+                                                            {item.name}
+                                                        </Link>
+                                                    </BreadcrumbLink>
+                                                ) : (
+                                                    <BreadcrumbPage>
+                                                        {item.name}
+                                                    </BreadcrumbPage>
+                                                )}
+                                            </BreadcrumbItem>
+                                        </React.Fragment>
+                                    ))}
+                            </BreadcrumbList>
+                        </Breadcrumb>
+                    </div>
+                </header>
+                <ScrollArea className="flex-1" ref={scrollViewportRef}>
+                    <main className="p-4">{children}</main>
+                </ScrollArea>
+            </SidebarInset>
+            <Toaster />
         </SidebarProvider>
     );
 }
