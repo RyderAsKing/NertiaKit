@@ -17,6 +17,7 @@ import { Link, usePage } from "@inertiajs/react";
 import React, { PropsWithChildren, ReactNode, useEffect, useRef } from "react";
 import { toast, Toaster } from "sonner";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import { ThemeSwitcher } from "@/Components/theme-switcher";
 
 interface PageProps {
     auth: {
@@ -71,7 +72,7 @@ export default function Authenticated({
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset className="flex h-screen flex-col">
-                <header className="flex h-16 shrink-0 items-center gap-2 border-b border-gray-100 bg-white p-4">
+                <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b bg-background p-4">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-4" />
                         <Breadcrumb>
@@ -104,6 +105,9 @@ export default function Authenticated({
                                     ))}
                             </BreadcrumbList>
                         </Breadcrumb>
+                    </div>
+                    <div className="flex items-center gap-2 px-4">
+                        <ThemeSwitcher />
                     </div>
                 </header>
                 <ScrollArea className="flex-1" ref={scrollViewportRef}>
