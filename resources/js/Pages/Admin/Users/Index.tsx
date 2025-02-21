@@ -102,7 +102,6 @@ export default function Index({ users, filters }: Props) {
 
             <div>
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold">Users</h2>
                     <Button asChild>
                         <Link href={route("admin.users.create")}>
                             <Plus className="w-4 h-4 mr-2" />
