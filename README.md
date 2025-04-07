@@ -1,6 +1,6 @@
 # Nertiakit - Laravel Inertia.js SaaS Starter Kit
 
-![Nertiakit Banner](https://raw.githubusercontent.com/RyderAsKing/NertiaKit/refs/heads/master/public/assets/nertiakit_full.png?token=GHSAT0AAAAAACWQV6FQIABNU7VTBXVYPDWYZ5Y6ILQ)
+![Nertiakit Banner](https://raw.githubusercontent.com/RyderAsKing/NertiaKit/master/public/assets/nertiakit_full.png)
 
 A minimalistic Laravel + Inertia.js starter kit designed to accelerate the development of SaaS applications, admin dashboards, and multi-role web apps. Built with authentication, role-based access control (RBAC), modern UI components, and TypeScript support.
 
