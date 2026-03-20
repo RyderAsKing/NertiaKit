@@ -9,6 +9,7 @@ A minimalistic Laravel + Inertia.js starter kit designed to accelerate the devel
 -   Authentication with Laravel Breeze
 -   Role-Based Access Control using Spatie Permissions
 -   Inertia.js + React for seamless SPA experience
+-   Real-time features with Laravel Reverb WebSockets
 -   ShadCN UI Components with modern styling
 -   Tailwind CSS for responsive design
 -   Toast notifications for user feedback
@@ -253,6 +254,145 @@ app/Http/Controllers/
 └── Auth/                # Auth controllers
 ```
 
+### Real-Time Features with Laravel Reverb
+
+NertiaKit comes with Laravel Reverb pre-configured for real-time WebSocket communication. Reverb is a first-party Laravel WebSocket server that provides blazing-fast, scalable real-time capabilities.
+
+#### Broadcasting Setup
+
+The project is already configured with:
+
+-   Laravel Echo on the frontend (`resources/js/echo.ts`)
+-   Reverb configuration in `.env` and `config/broadcasting.php`
+-   Broadcasting channels in `routes/channels.php`
+-   TypeScript declarations for `window.Echo`
+
+#### Creating Broadcast Events
+
+1. Generate a new event:
+
+```bash
+php artisan make:event UserStatusChanged
+```
+
+2. Implement the `ShouldBroadcast` interface:
+
+```php
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+
+class UserStatusChanged implements ShouldBroadcast
+{
+    public function __construct(
+        public User $user,
+        public string $status
+    ) {}
+
+    public function broadcastOn(): array
+    {
+        return [
+            new Channel('users'),
+        ];
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'status.changed';
+    }
+}
+```
+
+3. Dispatch the event from your controller:
+
+```php
+broadcast(new UserStatusChanged($user, 'online'));
+```
+
+#### Listening to Events in React
+
+Use Laravel Echo in your React components:
+
+```typescript
+import { useEffect } from "react";
+
+export default function Dashboard() {
+    useEffect(() => {
+        // Subscribe to a channel and listen for events
+        window.Echo.channel("users").listen(
+            "status.changed",
+            (e: { user: User; status: string }) => {
+                console.log(`${e.user.name} is now ${e.status}`);
+            }
+        );
+
+        // Cleanup: Leave the channel when component unmounts
+        return () => {
+            window.Echo.leaveChannel("users");
+        };
+    }, []);
+
+    return <div>Dashboard</div>;
+}
+```
+
+#### Private Channels
+
+For user-specific broadcasts, use private channels:
+
+1. Define authorization in `routes/channels.php`:
+
+```php
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('user.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+```
+
+2. Use PrivateChannel in your event:
+
+```php
+public function broadcastOn(): array
+{
+    return [
+        new PrivateChannel('user.'.$this->user->id),
+    ];
+}
+```
+
+3. Listen on the private channel:
+
+```typescript
+useEffect(() => {
+    window.Echo.private(`user.${auth.user.id}`).listen(
+        "notification.received",
+        (e) => {
+            toast.success(e.message);
+        }
+    );
+
+    return () => {
+        window.Echo.leaveChannel(`private-user.${auth.user.id}`);
+    };
+}, []);
+```
+
+#### Starting the Reverb Server
+
+In development, start the Reverb server alongside your application:
+
+```bash
+# Terminal 1: Start Reverb
+php artisan reverb:start
+
+# Terminal 2: Start Vite
+npm run dev
+
+# Terminal 3: Start Laravel (if needed)
+php artisan serve
+```
+
+For production, consider running Reverb as a supervised process using tools like Supervisor or Laravel Forge's daemon management.
+
 ## Getting Started
 
 ### Option 1: Use as a Template
@@ -294,6 +434,9 @@ php artisan key:generate
 
 # Run migrations and seed the database
 php artisan migrate --seed
+
+# (Optional) Start Reverb server for real-time features
+php artisan reverb:start
 ```
 
 The default admin credentials are:

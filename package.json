@@ -42,8 +42,10 @@
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",
         "framer-motion": "^12.4.7",
+        "laravel-echo": "^2.3.1",
         "lodash": "^4.17.21",
         "lucide-react": "^0.475.0",
+        "pusher-js": "^8.4.3",
         "sonner": "^2.0.1",
         "tailwind-merge": "^3.0.1",
         "tailwindcss-animate": "^1.0.7"
